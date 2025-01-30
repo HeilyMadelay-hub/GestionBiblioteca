@@ -1,1 +1,0 @@
-Esta carpeta trata del diseño de la aplicación.
