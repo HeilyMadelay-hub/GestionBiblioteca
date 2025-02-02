@@ -47,6 +47,7 @@ Este es un proyecto desarrollado en **Java** utilizando **NetBeans** como entorn
 |   |-- servicio/       # Lógica de negocio y validaciones
 |   |-- util/           # Herramientas auxiliares (configuración, logs)
 |   |-- main/           # Punto de entrada del sistema
+|   |-- vista/          # Interfaces gráficas de usuario
 |-- sql/                # Scripts para la base de datos
 |-- config.properties   # Configuración de la conexión a MySQL
 |-- README.md           # Documentación del proyecto
