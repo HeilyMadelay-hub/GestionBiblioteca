@@ -251,7 +251,7 @@ Copysrc/
 - **Email**: heilymadelayajtan@icloud.com
 
 ## 📄 Licencia
-Este proyecto está bajo licencia MIT.
+Este proyecto no tiene licencia.
 
 
 
