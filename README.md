@@ -129,7 +129,7 @@ Si hay errores de conexión a la base de datos, revisa:
   
 ## 📁 Estructura del Proyecto
 ```
-Copysrc/
+src/
 ├── modelo/                    # Entidades
 │   ├── Autor.java
 │   ├── Categoria.java
