@@ -53,73 +53,78 @@ mysql -u root -p < sql/schema.sql
 # Insertar datos iniciales (ejemplo: libros, usuarios, etc.)
 mysql -u root -p < sql/data.sql
 ```
-###⚠️ Nota:
+### ⚠️ Nota:
 
 Reemplaza root por tu usuario de MySQL si es diferente.
 
 Asegúrate de que la contraseña coincida con tu configuración de MySQL.
 
-2. Configuración del Archivo config.properties
+### 2. Configuración del Archivo config.properties
 
 Crea un archivo config.properties en la raíz del proyecto con el siguiente contenido:
 
 # Configuración de Base de Datos
+```bash
 db.url=jdbc:mysql://localhost:3306/biblioteca
 db.user=root
 db.password=root  # Cambiar si tu contraseña es diferente
-
+```
 # Configuración de la Aplicación
+```bash
 app.language=es
 app.transaction.isolation=TRANSACTION_READ_COMMITTED
 app.transaction.timeout=30
-
+```
 # Configuración de Logging
+```bash
 log.file.path=./log.txt
 log.level=INFO
+```
 
-🔧 Ajustes Recomendados:
+### 🔧 Ajustes Recomendados:
 
 Si usas otro puerto o nombre de base de datos, modifica db.url.
 
 Cambia app.language a en para inglés.
 
-3. Configuración en NetBeans
+### 3. Configuración en NetBeans
 
-Importar Proyecto:
+- Importar Proyecto:
 
-Abre NetBeans y selecciona File > Open Project.
+- Abre NetBeans y selecciona File > Open Project.
 
-Navega hasta la carpeta del proyecto y ábrelo.
+- Navega hasta la carpeta del proyecto y ábrelo.
 
-Añadir Driver JDBC:
+- Añadir Driver JDBC:
 
-Haz clic derecho en el proyecto > Properties > Libraries > Add JAR/Folder.
+- Haz clic derecho en el proyecto > Properties > Libraries > Add JAR/Folder.
 
-Busca el archivo .jar del driver MySQL (ejemplo: mysql-connector-java-8.0.30.jar).
+- Busca el archivo .jar del driver MySQL (ejemplo: mysql-connector-java-8.0.30.jar).
 
-🛠️ Despliegue de la Aplicación
+### 🛠️ Despliegue de la Aplicación
 
-Compilar el Proyecto:
+### Compilar el Proyecto:
 
-En NetBeans, haz clic en el botón Clean & Build (martillo verde).
+- En NetBeans, haz clic en el botón Clean & Build (martillo verde).
 
-Ejecutar la Aplicación:
+- Ejecutar la Aplicación:
 
-Desde la terminal, usa:
-
+- Desde la terminal, usa:
+  
+```bash
 java -jar NombreDelProyecto.jar
-
+```
 Verifica los logs en ./log.txt para detectar errores.
 
-🔍 Soporte
+### 🔍 Soporte
 
 Si hay errores de conexión a la base de datos, revisa:
 
-Credenciales en config.properties.
+- Credenciales en config.properties.
 
-Que MySQL esté corriendo en el puerto 3306.
+- Que MySQL esté corriendo en el puerto 3306.
 
-Para problemas con el driver JDBC, asegúrate de que la versión coincida con tu servidor MySQL.
+- Para problemas con el driver JDBC, asegúrate de que la versión coincida con tu servidor MySQL.
 
   
 ## 📁 Estructura del Proyecto
