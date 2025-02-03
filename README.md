@@ -1,23 +1,29 @@
 # Sistema de Gestión de Biblioteca
 
 ## Descripción
+
 Este es un proyecto desarrollado en **Java** utilizando **NetBeans** como entorno de desarrollo y **MySQL** como motor de base de datos. Implementa un sistema de gestión de biblioteca que permite administrar usuarios, libros y préstamos mediante el uso de conectores **JDBC**.
 
 ## Características Principales
 
 ### 📌 Gestión de Usuarios
-- Registro, actualización y eliminación de usuarios con roles (*administrador* y *usuario regular*).
+
+- Registro, actualización y eliminación de usuarios con roles (_administrador_ y _usuario regular_).
 
 ### 📌 Gestión de Libros
+
 - Registro, actualización, búsqueda y eliminación de libros.
 
 ### 📌 Gestión de Préstamos
+
 - Control de préstamos y devoluciones con restricciones.
 
 ### 📌 Reportes
+
 - Generación de estadísticas sobre uso de libros y usuarios activos.
 
 ### 🔒 Seguridad
+
 - Uso de consultas parametrizadas.
 - Cifrado de contraseñas.
 - Registro de operaciones en logs.
@@ -40,18 +46,39 @@ Este es un proyecto desarrollado en **Java** utilizando **NetBeans** como entorn
 
 ## 📂 Estructura del Proyecto
 
-```
 |-- src/
-|   |-- modelo/         # Clases de entidades (Usuario, Libro, Prestamo)
-|   |-- dao/            # Acceso a datos con JDBC
-|   |-- servicio/       # Lógica de negocio y validaciones
-|   |-- util/           # Herramientas auxiliares (configuración, logs)
-|   |-- main/           # Punto de entrada del sistema
-|   |-- vista/          # Interfaces gráficas de usuario
-|-- sql/                # Scripts para la base de datos
-|-- config.properties   # Configuración de la conexión a MySQL
-|-- README.md           # Documentación del proyecto
-```
+| |-- modelo/ # Entity classes (User, Book, Loan, Category, etc.)
+| |-- dao/ # Data Access Objects interfaces
+| | |-- DAO.IMPL/ # JDBC implementations of DAO interfaces
+| |-- servicio/ # Business logic and validation services
+| |-- util/ # Utility classes
+| | |-- DatabaseUtil.java # Database connection management
+| | |-- LogUtil.java # Logging utilities
+| | |-- SecurityUtil.java # Security-related utilities
+| |-- main/ # Application entry point
+| |-- vista/ # GUI components using Java Swing
+| | |-- JPanelInicio.java
+| | |-- JPanelLibroVista.java
+| | |-- JPanelPrestamoVista.java
+| | |-- JPanelReportesVista.java
+| | |-- JPanelReservaVista.java
+| | |-- JPanelUsuarioVista.java
+| | |-- MainFrame.java
+| |-- observer/ # Observer pattern implementation
+| | |-- LibroNotificador.java
+| | |-- Observable.java
+| | |-- Observer.java
+| | |-- UsuarioNotificion.java
+| |-- enums/ # Enumeration classes
+| | |-- EstadoLibroEnum.java
+| | |-- EstadoReservaEnum.java
+| | |-- RolEnum.java
+| | |-- TipoContactoEnum.java
+| | |-- TipoLogEnum.java
+| | |-- TipoPrestamoEnum.java
+|-- sql/ # Database scripts and schema
+|-- config.properties # MySQL connection configuration
+|-- README.md # Project documentation
 
 ## 🚀 Uso del Proyecto
 
@@ -66,6 +93,5 @@ Este es un proyecto desarrollado en **Java** utilizando **NetBeans** como entorn
 - **Registro de operaciones** en un archivo `log.txt`.
 
 ## 📧 Contacto
-Si tienes dudas o sugerencias, no dudes en abrir un *issue* o contribuir al proyecto.
 
-
+Si tienes dudas o sugerencias, no dudes en abrir un _issue_ o contribuir al proyecto.
