@@ -1,8 +1,7 @@
 # Sistema de Gestión de Biblioteca JDBC
 
 ## 📚 Descripción
-Sistema completo de gestión bibliotecaria implementando patrones DAO y Observer.
-
+Sistema completo de gestión bibliotecaria que permite realizar operaciones como registrar usuarios, gestionar libros y préstamos, generar reportes avanzados y garantizar la seguridad de los datos. Implementa operaciones CRUD utilizando JDBC y MySQL, con patrones DAO y Observer.
 
 ## 🌟 Funcionalidades
 - Gestión completa CRUD de usuarios, libros y préstamos.
@@ -11,6 +10,13 @@ Sistema completo de gestión bibliotecaria implementando patrones DAO y Observer
 - Sistema de auditoría y logging.
 - Reportes estadísticos avanzados.
 
+## ⭐ Características Destacadas
+- Sistema de notificaciones automáticas
+- Reportes estadísticos avanzados
+- Gestión de préstamos express
+- Auditoría completa de operaciones
+- Interfaz gráfica intuitiva
+
 ## 🛠️ Tecnologías
 - Java 8+
 - MySQL
@@ -18,6 +24,104 @@ Sistema completo de gestión bibliotecaria implementando patrones DAO y Observer
 - Patrones: DAO, Observer
 - SHA-256 para cifrado
 
+## 📥 Requisitos Previos
+Herramientas Necesarias
+- JDK 8 o superior
+- MySQL 5.7+
+- NetBeans IDE
+- Driver MySQL JDBC
+
+# Configuración y Despliegue del Proyecto
+
+## 📋 Requisitos Previos
+- Java JDK 8 o superior
+- MySQL Server
+- NetBeans IDE
+- Driver JDBC de MySQL (ejemplo: `mysql-connector-java-8.0.30.jar`)
+
+---
+
+## 🚀 Pasos para Configuración
+
+### 1. Preparación de la Base de Datos
+Ejecuta los siguientes comandos en tu terminal:
+
+```bash
+# Crear esquema y tablas (ajusta el nombre de la base de datos si es necesario)
+mysql -u root -p < sql/schema.sql
+
+# Insertar datos iniciales (ejemplo: libros, usuarios, etc.)
+mysql -u root -p < sql/data.sql
+```
+###⚠️ Nota:
+
+Reemplaza root por tu usuario de MySQL si es diferente.
+
+Asegúrate de que la contraseña coincida con tu configuración de MySQL.
+
+2. Configuración del Archivo config.properties
+
+Crea un archivo config.properties en la raíz del proyecto con el siguiente contenido:
+
+# Configuración de Base de Datos
+db.url=jdbc:mysql://localhost:3306/biblioteca
+db.user=root
+db.password=root  # Cambiar si tu contraseña es diferente
+
+# Configuración de la Aplicación
+app.language=es
+app.transaction.isolation=TRANSACTION_READ_COMMITTED
+app.transaction.timeout=30
+
+# Configuración de Logging
+log.file.path=./log.txt
+log.level=INFO
+
+🔧 Ajustes Recomendados:
+
+Si usas otro puerto o nombre de base de datos, modifica db.url.
+
+Cambia app.language a en para inglés.
+
+3. Configuración en NetBeans
+
+Importar Proyecto:
+
+Abre NetBeans y selecciona File > Open Project.
+
+Navega hasta la carpeta del proyecto y ábrelo.
+
+Añadir Driver JDBC:
+
+Haz clic derecho en el proyecto > Properties > Libraries > Add JAR/Folder.
+
+Busca el archivo .jar del driver MySQL (ejemplo: mysql-connector-java-8.0.30.jar).
+
+🛠️ Despliegue de la Aplicación
+
+Compilar el Proyecto:
+
+En NetBeans, haz clic en el botón Clean & Build (martillo verde).
+
+Ejecutar la Aplicación:
+
+Desde la terminal, usa:
+
+java -jar NombreDelProyecto.jar
+
+Verifica los logs en ./log.txt para detectar errores.
+
+🔍 Soporte
+
+Si hay errores de conexión a la base de datos, revisa:
+
+Credenciales en config.properties.
+
+Que MySQL esté corriendo en el puerto 3306.
+
+Para problemas con el driver JDBC, asegúrate de que la versión coincida con tu servidor MySQL.
+
+  
 ## 📁 Estructura del Proyecto
 ```
 Copysrc/
@@ -98,40 +202,6 @@ Copysrc/
     └── Main.java
 ```
 
-## 📥 Requisitos
-- JDK 8+
-- MySQL 5.7+
-- NetBeans IDE
-- Driver MySQL JDBC
-- Base de datos biblioteca creada
-
-## ⚙️ Configuración
-### Clonar el repositorio
-```bash
-git clone https://github.com/tuusuario/biblioteca-jdbc.git
-```
-### Configurar la base de datos
-```bash
-mysql -u root -p < sql/schema.sql
-mysql -u root -p < sql/data.sql
-```
-### Configurar `config.properties`
-```properties
-# Database Configuration
-db.url=jdbc:mysql://localhost:3306/biblioteca
-db.user=root
-db.password=root
-
-# Application Configuration
-app.language=es
-app.transaction.isolation=TRANSACTION_READ_COMMITTED
-app.transaction.timeout=30
-
-# Logging Configuration
-log.file.path=./log.txt
-log.level=INFO
-```
-
 ## 🔒 Seguridad Implementada
 - Consultas parametrizadas (evita SQL Injection).
 - Cifrado SHA-256 para contraseñas.
@@ -163,6 +233,14 @@ log.level=INFO
 - Patrón Observer para notificaciones de libros.
 - Logs detallados de operaciones.
 - Validaciones de negocio en capa servicio.
+
+## 📊 Estado del Proyecto
+- [x] Diseño de base de datos
+- [ ] Implementación core (DAO)
+- [ ] Sistema de préstamos y reservas
+- [ ] Sistema de notificaciones
+- [ ] Interfaz gráfica
+- [ ] Testing y deployment
 
 ## 📫 Contacto
 - **Email**: heilymadelayajtan@icloud.com
