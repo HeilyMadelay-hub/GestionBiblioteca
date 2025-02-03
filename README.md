@@ -194,12 +194,10 @@ Copysrc/
 │   └── TipoLogEnum.java
 │
 ├── vista/                    # Interfaz gráfica
-│   ├── AutorVista.java
-│   ├── CategoriaVista.java
-│   ├── ContactoVista.java
-│   ├── GeneroVista.java
-│   ├── LibroVista.java
+│   ├── InicioVista.java
+|   |── LibroVista.java
 │   ├── PrestamoVista.java
+│   ├── ReportesVista.java
 │   ├── ReservaVista.java
 │   └── UsuarioVista.java
 │
