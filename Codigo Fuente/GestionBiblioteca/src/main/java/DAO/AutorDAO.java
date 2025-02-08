@@ -1,10 +1,10 @@
 
 package DAO;
 
-/**
- *
- * @author heily
- */
-public class AutorDAO{
+import Modelo.Autor;
 
+public interface AutorDAO extends DAO<Autor> {
+    
+    void eliminarTodos() throws Exception;
+    
 }

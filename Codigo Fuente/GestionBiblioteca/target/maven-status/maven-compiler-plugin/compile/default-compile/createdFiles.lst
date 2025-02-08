@@ -10,8 +10,6 @@ Observer\LibroNotificador.class
 Servicio\GeneroServicio.class
 DAO\LibroDAO.class
 Modelo\Reserva.class
-IMPL\UsuarioDAOImpl.class
-IMPL\AutorDAOImpl.class
 Modelo\Usuario.class
 IMPL\LibroDAOImpl.class
 Servicio\PrestamoServicio.class
@@ -33,9 +31,11 @@ DAO\UsuarioDAO.class
 Modelo\Log.class
 IMPL\CategoriaDAOImpl.class
 Modelo\Autor.class
+DAO\IMPL\AutorDAOImpl.class
 IMPL\PrestamoDAOImpl.class
 Modelo\Genero.class
 Modelo\Libro.class
+DAO\IMPL\UsuarioDAOImpl.class
 DAO\AutorDAO.class
 DAO\ReservaDAO.class
 Servicio\CategoriaServicio.class
@@ -49,10 +49,10 @@ Util\SecurityUtil.class
 Vista\JPanelReportesVista.class
 Modelo\Prestamo.class
 Util\LogUtil.class
-Main\Main$1.class
 Vista\JPanelLibroVista.class
 DAO\LogDAO.class
 enums\EstadoLibroEnum.class
+DAO\DAO.class
 Servicio\LibroServicio.class
 Servicio\LogServicio.class
 Vista\MainFrame.class
