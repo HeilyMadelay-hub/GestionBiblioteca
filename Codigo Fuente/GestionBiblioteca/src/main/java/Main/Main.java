@@ -15,6 +15,7 @@ public class Main {
 
     public static void main(String[] args) {
         
+         /*TESTING DE AUTOR
         
         try {
             AutorDAO autorDAO = new AutorDAOImpl();
@@ -82,7 +83,7 @@ public class Main {
         }
         
           
-        /*
+       
         TESTING DE USUARIO
         
         try {
