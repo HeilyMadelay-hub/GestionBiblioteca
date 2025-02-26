@@ -35,6 +35,7 @@ C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBibliote
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\ContactoDAOImpl.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Vista\JPanelReservaVista.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\LogDAOImpl.java
+C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Observer\UsuarioNotificacion.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Servicio\CategoriaServicio.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\LibroDAOImpl.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\GeneroDAOImpl.java
@@ -42,7 +43,6 @@ C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBibliote
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Vista\JPanelInicio.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Vista\MainFrame.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\CategoriaDAOImpl.java
-C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\Observer\UsuarioNotificion.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\IMPL\ReservaDAOImpl.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\enums\EstadoReservaEnum.java
 C:\Users\heily\Desktop\PROYECTOS\GestionBiblioteca\Codigo Fuente\GestionBiblioteca\src\main\java\DAO\UsuarioDAO.java

@@ -1,9 +1,7 @@
 package DAO;
 
-/**
- *
- * @author heily
- */
-public class CategoriaDAO {
+import Modelo.Categoria;
 
+public interface CategoriaDAO extends DAO<Categoria> {
+    void eliminarTodos() throws Exception;
 }
