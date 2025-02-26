@@ -316,3 +316,223 @@ JOIN reservas r ON u.id_usuario = r.id_usuario
 JOIN libros l ON r.id_libro = l.id_libro
 JOIN estados_reserva er ON r.id_estado_reserva = er.id_estado_reserva
 WHERE er.nombre IN ('pendiente', 'vencida');
+
+show tables;
+use biblioteca;
+Use autores;
+ALTER TABLE autores ADD UNIQUE (nombre);
+select * from categorias;
+
+select * from contactos_usuario;
+
+DELIMITER //
+
+CREATE TRIGGER before_update_prestamo_id
+BEFORE UPDATE ON prestamos
+FOR EACH ROW
+BEGIN
+    -- Actualizamos las referencias en prestamos_express si existen
+    IF NEW.id_prestamo != OLD.id_prestamo THEN
+        UPDATE prestamos_express 
+        SET id_prestamo = NEW.id_prestamo 
+        WHERE id_prestamo = OLD.id_prestamo;
+    END IF;
+END //
+
+DELIMITER ;
+
+-- 1. Primero eliminar el trigger existente
+DROP TRIGGER IF EXISTS check_prestamos_limite;
+
+-- 2. Establecer el delimitador
+DELIMITER //
+
+-- 3. Crear el nuevo trigger
+CREATE TRIGGER check_prestamos_limite
+BEFORE INSERT ON prestamos
+FOR EACH ROW
+BEGIN
+    DECLARE usuario_rol VARCHAR(20);
+    DECLARE prestamos_activos INT;
+    DECLARE usuario_existe INT;
+    
+    -- Verificar si el usuario existe
+    SELECT COUNT(*) INTO usuario_existe
+    FROM usuarios
+    WHERE id_usuario = NEW.id_usuario;
+    
+    IF usuario_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario no existe';
+    END IF;
+    
+    -- Obtener el rol del usuario
+    SELECT r.nombre_rol INTO usuario_rol
+    FROM usuarios u
+    JOIN roles r ON u.id_rol = r.id_rol
+    WHERE u.id_usuario = NEW.id_usuario;
+    
+    IF usuario_rol IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El rol del usuario no está definido';
+    END IF;
+    
+    IF usuario_rol = 'usuario' THEN
+        SELECT COUNT(*) INTO prestamos_activos
+        FROM prestamos
+        WHERE id_usuario = NEW.id_usuario
+        AND fecha_devolucion_real IS NULL;
+        
+        IF prestamos_activos >= 3 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Usuario regular no puede tener más de 3 préstamos activos';
+        END IF;
+    END IF;
+END //
+
+-- 4. Restaurar el delimitador
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS check_prestamos_limite;
+
+DELIMITER //
+
+CREATE TRIGGER check_prestamos_limite
+BEFORE INSERT ON prestamos
+FOR EACH ROW
+BEGIN
+    DECLARE usuario_rol VARCHAR(20);
+    DECLARE prestamos_activos INT;
+    DECLARE usuario_existe INT;
+    
+    -- Verificar si el usuario existe
+    SELECT COUNT(*) INTO usuario_existe
+    FROM usuarios
+    WHERE id_usuario = NEW.id_usuario;
+    
+    IF usuario_existe = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario no existe';
+    END IF;
+    
+    -- Obtener el rol del usuario
+    SELECT r.nombre_rol INTO usuario_rol
+    FROM usuarios u
+    JOIN roles r ON u.id_rol = r.id_rol
+    WHERE u.id_usuario = NEW.id_usuario;
+    
+    -- Contar los préstamos activos (sin devolver) para el usuario
+    SELECT COUNT(*) INTO prestamos_activos
+    FROM prestamos
+    WHERE id_usuario = NEW.id_usuario
+    AND fecha_devolucion_real IS NULL;
+    
+    -- Para usuarios regulares, verificar el límite
+    IF usuario_rol = 'usuario' AND prestamos_activos >= 3 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Usuario regular no puede tener más de 3 préstamos activos';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER before_delete_prestamo
+BEFORE DELETE ON prestamos
+FOR EACH ROW
+BEGIN
+    -- Reducir el contador de préstamos activos del usuario
+    UPDATE usuarios u
+    SET u.prestamos_activos = u.prestamos_activos - 1
+    WHERE u.id_usuario = OLD.id_usuario;
+
+    -- Actualizar el estado del libro a disponible
+    UPDATE libros l
+    SET l.id_estado = (SELECT id_estado FROM estados_libro WHERE nombre = 'disponible')
+    WHERE l.id_libro = OLD.id_libro;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER after_update_prestamo_devolucion
+AFTER UPDATE ON prestamos
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_devolucion_real IS NOT NULL AND OLD.fecha_devolucion_real IS NULL THEN
+        -- Reducir el contador de préstamos activos del usuario
+        UPDATE usuarios u
+        SET u.prestamos_activos = u.prestamos_activos - 1
+        WHERE u.id_usuario = NEW.id_usuario;
+    END IF;
+END //
+
+DELIMITER ;
+ALTER TABLE usuarios ADD COLUMN prestamos_activos INT DEFAULT 0;
+
+DROP TRIGGER IF EXISTS before_delete_prestamo;
+
+DELIMITER //
+
+CREATE TRIGGER after_delete_prestamo
+AFTER DELETE ON prestamos
+FOR EACH ROW
+BEGIN
+    -- Reorganizar los IDs de los préstamos restantes
+    SET @count = 0;
+    UPDATE prestamos SET id_prestamo = (@count := @count + 1) ORDER BY fecha_prestamo, id_prestamo;
+    -- Resetear el AUTO_INCREMENT
+    ALTER TABLE prestamos AUTO_INCREMENT = (SELECT COALESCE(MAX(id_prestamo), 0) + 1 FROM prestamos);
+END //
+
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS before_delete_prestamo;
+
+DROP TRIGGER IF EXISTS after_update_prestamo_devolucion;
+
+DELIMITER //
+
+CREATE TRIGGER after_update_prestamo_devolucion
+AFTER UPDATE ON prestamos
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_devolucion_real IS NOT NULL AND OLD.fecha_devolucion_real IS NULL THEN
+        -- Reducir el contador de préstamos activos del usuario
+        UPDATE usuarios u
+        SET u.prestamos_activos = u.prestamos_activos - 1
+        WHERE u.id_usuario = NEW.id_usuario;
+        
+        -- Verificar si es préstamo express
+        SET @dias = DATEDIFF(NEW.fecha_devolucion_real, NEW.fecha_prestamo);
+        IF @dias <= 7 THEN
+            -- Verificar si ya existe un registro express para este préstamo
+            IF NOT EXISTS (SELECT 1 FROM prestamos_express WHERE id_prestamo = NEW.id_prestamo) THEN
+                INSERT INTO prestamos_express (id_prestamo, dias_reales) VALUES (NEW.id_prestamo, @dias);
+            END IF;
+        END IF;
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER before_delete_prestamo
+BEFORE DELETE ON prestamos
+FOR EACH ROW
+BEGIN
+    -- Reducir el contador de préstamos activos del usuario
+    UPDATE usuarios u
+    SET u.prestamos_activos = u.prestamos_activos - 1
+    WHERE u.id_usuario = OLD.id_usuario;
+
+    -- Actualizar el estado del libro a disponible
+    UPDATE libros l
+    SET l.id_estado = (SELECT id_estado FROM estados_libro WHERE nombre = 'disponible')
+    WHERE l.id_libro = OLD.id_libro;
+END //
+
+DELIMITER ;
