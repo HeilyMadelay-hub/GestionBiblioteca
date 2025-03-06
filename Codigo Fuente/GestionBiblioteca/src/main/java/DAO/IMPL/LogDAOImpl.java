@@ -23,6 +23,43 @@ public class LogDAOImpl implements LogDAO {
         "SELECT * FROM logs WHERE fecha BETWEEN ? AND ? ORDER BY fecha DESC";
     private static final String SQL_DELETE = 
         "DELETE FROM logs WHERE id_log = ?";
+    
+    @Override
+public List<Log> obtenerLogsPorUsuarioEnRango(Integer idUsuario, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws SQLException {
+    List<Log> logs = new ArrayList<>();
+    
+    // SQL para obtener logs de un usuario en un rango de fechas
+    String sql = "SELECT * FROM logs WHERE id_usuario = ? AND fecha BETWEEN ? AND ? ORDER BY fecha DESC";
+    
+    try (Connection conn = DatabaseUtil.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setInt(1, idUsuario);
+        stmt.setTimestamp(2, Timestamp.valueOf(fechaInicio));
+        stmt.setTimestamp(3, Timestamp.valueOf(fechaFin));
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Log log = new Log();
+                log.setIdLog(rs.getInt("id_log"));
+                log.setIdTipoLog(rs.getInt("id_tipo_log"));
+                log.setIdUsuario(rs.getInt("id_usuario"));
+                log.setAccion(rs.getString("accion"));
+                log.setDetalles(rs.getString("detalles"));
+                
+                // Convertir Timestamp a LocalDateTime
+                Timestamp fechaTimestamp = rs.getTimestamp("fecha");
+                if (fechaTimestamp != null) {
+                    log.setFecha(fechaTimestamp.toLocalDateTime());
+                }
+                
+                logs.add(log);
+            }
+        }
+    }
+    
+    return logs;
+}
 
     @Override
     public void insertar(Log log) throws SQLException {

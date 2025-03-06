@@ -71,7 +71,7 @@ public class UsuarioNotificacion implements Observer {
      * 
      * @param libro El libro que está disponible
      */
-    private void enviarNotificacion(Libro libro) {
+    protected void enviarNotificacion(Libro libro) {
         // Aquí se implementaría la lógica para enviar un email, SMS, etc.
         // Por ahora solo registramos en el log
         LOGGER.log(Level.INFO, "NOTIFICACIÓN para usuario {0}: El libro '{1}' (ID: {2}) " +

@@ -536,3 +536,177 @@ BEGIN
 END //
 
 DELIMITER ;
+
+use biblioteca;
+
+ALTER TABLE prestamos ADD COLUMN orden_prestamo INT;
+
+-- 1. Validación de fechas en préstamos
+ALTER TABLE prestamos ADD CHECK (fecha_devolucion_esperada > fecha_prestamo);
+ALTER TABLE prestamos ADD CHECK (fecha_devolucion_real > fecha_prestamo);
+
+-- 2. Asegurar orden único de préstamos por usuario
+ALTER TABLE prestamos ADD UNIQUE (id_usuario, orden_prestamo);
+
+-- 3. Índices para mejorar rendimiento de consultas frecuentes
+CREATE INDEX idx_prestamos_usuario_fecha ON prestamos(id_usuario, fecha_prestamo);
+CREATE INDEX idx_prestamos_libro_fecha ON prestamos(id_libro, fecha_prestamo);
+CREATE INDEX idx_libros_estado ON libros(id_estado);
+CREATE INDEX idx_usuarios_nombre ON usuarios(nombre);
+CREATE INDEX idx_contactos_valor ON contactos_usuario(valor);
+
+-- 4. Validación de contraseña
+ALTER TABLE usuarios ADD CHECK (LENGTH(password) = 64);
+
+-- 5. Tabla para tracking de multas
+CREATE TABLE multas_historial (
+    id_multa INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT,
+    monto DECIMAL(10,2),
+    fecha_aplicacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    motivo TEXT,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- 6. Trigger para validar fechas
+DELIMITER //
+CREATE TRIGGER check_fechas_prestamo
+BEFORE INSERT ON prestamos
+FOR EACH ROW
+BEGIN
+    IF NEW.fecha_devolucion_esperada <= NEW.fecha_prestamo THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de devolución esperada debe ser posterior a la fecha de préstamo';
+    END IF;
+END //
+DELIMITER ;
+
+
+-- 1. Primero seleccionar la base de datos
+USE biblioteca;
+
+-- 2. Limpiar/actualizar datos existentes antes de añadir restricciones
+UPDATE prestamos SET orden_prestamo = ROW_NUMBER() 
+OVER (PARTITION BY id_usuario ORDER BY fecha_prestamo)
+WHERE orden_prestamo IS NULL;
+
+-- 3. Añadir las restricciones de fechas solo después de validar datos existentes
+ALTER TABLE prestamos ADD CHECK (fecha_devolucion_esperada > fecha_prestamo);
+ALTER TABLE prestamos ADD CHECK (fecha_devolucion_real IS NULL OR fecha_devolucion_real > fecha_prestamo);
+
+-- 4. Crear índices (estos no dieron error)
+CREATE INDEX idx_prestamos_usuario_fecha ON prestamos(id_usuario, fecha_prestamo);
+CREATE INDEX idx_prestamos_libro_fecha ON prestamos(id_libro, fecha_prestamo);
+CREATE INDEX idx_libros_estado ON libros(id_estado);
+CREATE INDEX idx_usuarios_nombre ON usuarios(nombre);
+CREATE INDEX idx_contactos_valor ON contactos_usuario(valor);
+
+-- 5. Finalmente, añadir la restricción UNIQUE después de asegurar que no hay duplicados
+ALTER TABLE prestamos ADD UNIQUE (id_usuario, orden_prestamo);
+
+
+-- 1. Primero, vamos a limpiar completamente la tabla prestamos_express
+SET SQL_SAFE_UPDATES = 0;
+TRUNCATE TABLE prestamos_express;
+
+-- 2. Reiniciar las variables
+SET @row_number = 0;
+SET @current_user = 0;
+
+-- 3. Hacer el UPDATE usando id_prestamo específicamente
+UPDATE prestamos p
+        INNER JOIN
+    (SELECT 
+        id_prestamo,
+            id_usuario,
+            @row_number:=IF(@current_user = id_usuario, @row_number + 1, 1) AS row_num,
+            @current_user:=id_usuario AS user_id
+    FROM
+        (SELECT 
+        id_prestamo, id_usuario
+    FROM
+        prestamos
+    ORDER BY id_usuario , fecha_prestamo) ordered) AS temp ON p.id_prestamo = temp.id_prestamo 
+SET 
+    p.orden_prestamo = temp.row_num
+WHERE
+    p.id_prestamo > 0
+
+-- 4. Volver a activar safe mode
+SET SQL_SAFE_UPDATES = 1;
+
+-- 1. Verificar que no hay huecos en el orden_prestamo para cada usuario
+SELECT id_usuario, 
+       GROUP_CONCAT(orden_prestamo ORDER BY orden_prestamo) as secuencia,
+       COUNT(*) as total_prestamos,
+       MIN(orden_prestamo) as min_orden,
+       MAX(orden_prestamo) as max_orden
+FROM prestamos
+WHERE fecha_devolucion_real IS NULL
+GROUP BY id_usuario
+HAVING COUNT(*) != MAX(orden_prestamo) 
+   OR MIN(orden_prestamo) != 1;
+
+-- 2. Verificar que el orden respeta las fechas de préstamo
+SELECT p1.id_usuario, 
+       p1.id_prestamo, 
+       p1.fecha_prestamo, 
+       p1.orden_prestamo,
+       p2.id_prestamo as prestamo_siguiente,
+       p2.fecha_prestamo as fecha_siguiente,
+       p2.orden_prestamo as orden_siguiente
+FROM prestamos p1
+LEFT JOIN prestamos p2 ON p1.id_usuario = p2.id_usuario 
+    AND p1.orden_prestamo = p2.orden_prestamo - 1
+WHERE p1.fecha_prestamo > p2.fecha_prestamo
+AND p1.fecha_devolucion_real IS NULL
+AND p2.fecha_devolucion_real IS NULL;
+
+-- 3. Mostrar un resumen de préstamos activos por usuario
+SELECT id_usuario,
+       COUNT(*) as total_prestamos,
+       GROUP_CONCAT(CONCAT('ID:', id_prestamo, ' Orden:', orden_prestamo) 
+                   ORDER BY orden_prestamo) as detalle_prestamos
+FROM prestamos
+WHERE fecha_devolucion_real IS NULL
+GROUP BY id_usuario;
+
+-- Procedimiento que elimina un índice si existe
+DELIMITER //
+CREATE PROCEDURE drop_index_if_exists(IN table_name VARCHAR(100), IN index_name VARCHAR(100))
+BEGIN
+    IF((SELECT COUNT(*) AS index_exists FROM information_schema.statistics 
+        WHERE table_schema = DATABASE() AND table_name = table_name AND index_name = index_name) > 0) 
+    THEN
+        SET @drop_statement = CONCAT('DROP INDEX ', index_name, ' ON ', table_name);
+        PREPARE stmt FROM @drop_statement;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+    END IF;
+END //
+DELIMITER ;
+
+-- Usar el procedimiento
+CALL drop_index_if_exists('prestamos', 'idx_prestamos_usuario_fecha');
+CALL drop_index_if_exists('prestamos', 'idx_prestamos_libro_fecha');
+CALL drop_index_if_exists('libros', 'idx_libros_estado');
+CALL drop_index_if_exists('usuarios', 'idx_usuarios_nombre');
+CALL drop_index_if_exists('contactos_usuario', 'idx_contactos_valor');
+
+-- Luego crear los índices normalmente
+CREATE INDEX idx_prestamos_usuario_fecha ON prestamos(id_usuario, fecha_prestamo);
+CREATE INDEX idx_prestamos_libro_fecha ON prestamos(id_libro, fecha_prestamo);
+CREATE INDEX idx_libros_estado ON libros(id_estado);
+CREATE INDEX idx_usuarios_nombre ON usuarios(nombre);
+CREATE INDEX idx_contactos_valor ON contactos_usuario(valor);
+
+
+
+use biblioteca;
+
+
+INSERT INTO usuarios (nombre, password, id_rol, multa, activo)
+VALUES ('Heily', '123456', 1, 0.00, 1);
+select * from usuarios;
+
+

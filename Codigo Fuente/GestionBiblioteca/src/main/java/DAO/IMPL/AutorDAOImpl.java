@@ -11,14 +11,12 @@ import java.util.List;
 
 
 public class AutorDAOImpl implements AutorDAO {
-    
     private static final String SQL_INSERT = "INSERT INTO autores (nombre, nacionalidad) VALUES (?, ?)";
     private static final String SQL_UPDATE = "UPDATE autores SET nombre = ?, nacionalidad = ? WHERE id_autor = ?";
     private static final String SQL_DELETE = "DELETE FROM autores WHERE id_autor = ?";
     private static final String SQL_SELECT = "SELECT * FROM autores WHERE id_autor = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM autores ORDER BY id_autor";
     private static final String SQL_SELECT_BY_NOMBRE = "SELECT * FROM autores WHERE nombre = ?";
-
     @Override
     public void insertar(Autor autor) throws Exception {
         // Verificar si ya existe un autor con ese nombre

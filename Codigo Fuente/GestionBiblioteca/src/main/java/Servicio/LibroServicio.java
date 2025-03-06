@@ -458,4 +458,18 @@ public class LibroServicio {
         
         logDAO.insertar(log);
     }
+    
+    /**
+    * Busca libros por título o parte del título.
+    * 
+    * @param titulo Título o parte del título a buscar
+    * @return Lista de libros que coinciden con el criterio de búsqueda
+    * @throws Exception Si ocurre un error durante la búsqueda
+    */
+   public List<Libro> buscarPorTitulo(String titulo) throws Exception {
+       if (titulo == null || titulo.trim().isEmpty()) {
+           throw new Exception("El título de búsqueda no puede estar vacío.");
+       }
+       return libroDAO.buscarPorTitulo(titulo);
+   }
 }

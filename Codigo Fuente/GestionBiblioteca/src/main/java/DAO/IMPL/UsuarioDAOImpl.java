@@ -15,6 +15,28 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     private static final String SQL_SELECT = "SELECT * FROM usuarios WHERE id_usuario = ? AND activo = true";
     private static final String SQL_SELECT_ALL = "SELECT * FROM usuarios WHERE activo = true ORDER BY id_usuario";
     private static final String SQL_SELECT_BY_NOMBRE = "SELECT * FROM usuarios WHERE nombre = ? AND activo = true";
+    private static final String SQL_TIENE_PRESTAMOS_ACTIVOS = "SELECT COUNT(*) FROM prestamos WHERE id_usuario = ? AND fecha_devolucion_real IS NULL";
+    private static final String SQL_SELECT_BY_NOMBRE_AND_ACTIVO = 
+    "SELECT * FROM usuarios WHERE nombre = ? AND activo = true";
+    
+
+   
+    
+    public boolean tienePrestamosActivos(Integer idUsuario){
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_TIENE_PRESTAMOS_ACTIVOS)) {
+            stmt.setInt(1, idUsuario);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            // Manejar la excepción, o relanzarla como una excepción genérica
+            throw new RuntimeException("Error consultando préstamos activos", e);
+        }
+        return false;
+    }
     
     @Override
     public void eliminarTodos() throws Exception {
@@ -162,4 +184,26 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         usuario.setActivo(rs.getBoolean("activo"));
         return usuario;
     }
+
+    @Override
+    public Usuario obtenerUsuarioPorNombre(String nombre) throws Exception {
+        
+        Usuario usuario = null;
+        try (Connection conn = DatabaseUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQL_SELECT_BY_NOMBRE_AND_ACTIVO)) {
+
+            // Asignamos el valor del nombre
+            stmt.setString(1, nombre);
+
+            // Ejecutamos la consulta
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Si hay resultado, mapeamos la fila a un objeto Usuario
+                if (rs.next()) {
+                    usuario = mapearResultSetAUsuario(rs);
+                }
+            }
+        }
+        return usuario;
+    }
+    
 }

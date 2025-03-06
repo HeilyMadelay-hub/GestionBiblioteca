@@ -331,11 +331,11 @@ src/
 ## 📊 Estado del Proyecto
 
 - [x] Diseño de base de datos
-- [ ] Implementación core (DAO)
-- [ ] Sistema de préstamos y reservas
-- [ ] Sistema de notificaciones
-- [ ] Interfaz gráfica
-- [ ] Testing y deployment
+- [x] Implementación core (DAO)
+- [x] Sistema de préstamos y reservas
+- [x] Sistema de notificaciones
+- [x] Menu Consola
+- [x] Testing y deployment
 
 ## 📫 Contacto
 

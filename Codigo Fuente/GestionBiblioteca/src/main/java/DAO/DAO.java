@@ -1,8 +1,6 @@
-
 package DAO;
 
 import java.util.List;
-
 
 public interface DAO<T> {
     void insertar(T entidad) throws Exception;

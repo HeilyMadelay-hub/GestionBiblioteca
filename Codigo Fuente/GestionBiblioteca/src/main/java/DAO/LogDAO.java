@@ -13,4 +13,12 @@ public interface LogDAO {
     List<Log> obtenerPorUsuario(Integer idUsuario) throws SQLException;
     List<Log> obtenerPorFecha(LocalDateTime fechaInicio, LocalDateTime fechaFin) throws SQLException;
     void eliminar(Integer idLog) throws SQLException;
+    
+    /**
+    * Obtiene los logs para un usuario específico.
+    * @param idUsuario ID del usuario.
+    * @return Lista de logs del usuario.
+    * @throws SQLException Si ocurre un error durante la consulta.
+    */
+   List<Log> obtenerLogsPorUsuarioEnRango(Integer idUsuario, LocalDateTime fechaInicio, LocalDateTime fechaFin) throws SQLException;
 }

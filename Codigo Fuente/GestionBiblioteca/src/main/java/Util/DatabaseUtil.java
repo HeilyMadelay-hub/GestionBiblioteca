@@ -63,7 +63,15 @@ public class DatabaseUtil {
             // Limpiar
             stmt.execute("DROP TEMPORARY TABLE IF EXISTS temp_" + tableName);
             stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
-        }
+        }}
         
-    }
+        public static boolean probarConexion() {
+            try (Connection conn = getConnection()) {
+                return conn != null && !conn.isClosed();
+            } catch (SQLException e) {
+                System.err.println("Error al conectar a la base de datos: " + e.getMessage());
+                return false;
+            }
+        }
+ 
 }

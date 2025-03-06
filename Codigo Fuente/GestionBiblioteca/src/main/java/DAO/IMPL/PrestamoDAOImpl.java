@@ -1,6 +1,7 @@
 package DAO.IMPL;
 
 import DAO.PrestamoDAO;
+import Modelo.Libro;
 import Modelo.Prestamo;
 import Util.DatabaseUtil;
 import java.sql.Connection;
@@ -10,8 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PrestamoDAOImpl implements PrestamoDAO {
     
@@ -21,8 +25,6 @@ public class PrestamoDAOImpl implements PrestamoDAO {
     private static final String SQL_SELECT = "SELECT * FROM prestamos WHERE id_prestamo = ?";
     private static final String SQL_SELECT_ALL = "SELECT * FROM prestamos ORDER BY fecha_prestamo DESC";
 
-    
-    
     @Override
     public void eliminarTodos() throws Exception {
         try (Connection conn = DatabaseUtil.getConnection();
@@ -668,4 +670,71 @@ public void eliminar(Integer id) throws Exception {
             }
         }
     }
-}}
+}
+
+@Override
+public Map<Integer, Integer> obtenerFrecuenciaPrestamosLibros() throws Exception {
+    Map<Integer, Integer> frecuencia = new HashMap<>();
+    
+    try (Connection conn = DatabaseUtil.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(
+             "SELECT id_libro, COUNT(*) as cantidad " +
+             "FROM prestamos " +
+             "GROUP BY id_libro " +
+             "ORDER BY cantidad DESC")) {
+        
+        while (rs.next()) {
+            frecuencia.put(rs.getInt("id_libro"), rs.getInt("cantidad"));
+        }
+    }
+    
+    return frecuencia;
+}
+
+@Override
+public List<Map.Entry<Libro, Integer>> obtenerLibrosMasPrestados(int limite) throws Exception {
+    List<Map.Entry<Libro, Integer>> resultado = new ArrayList<>();
+    
+    try (Connection conn = DatabaseUtil.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(
+             "SELECT l.id_libro, l.titulo, l.isbn, COUNT(p.id_prestamo) as cantidad " +
+             "FROM prestamos p " +
+             "JOIN libros l ON p.id_libro = l.id_libro " +
+             "GROUP BY l.id_libro " +
+             "ORDER BY cantidad DESC " +
+             "LIMIT ?")) {
+        
+        stmt.setInt(1, limite);
+        
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Libro libro = new Libro();
+                libro.setIdLibro(rs.getInt("id_libro"));
+                libro.setTitulo(rs.getString("titulo"));
+                libro.setIsbn(rs.getString("isbn"));
+                
+                int cantidad = rs.getInt("cantidad");
+                
+                resultado.add(new AbstractMap.SimpleEntry<>(libro, cantidad));
+            }
+        }
+    }
+    
+    return resultado;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

@@ -14,7 +14,12 @@ import Modelo.Reserva;
 import Modelo.Usuario;
 import Observer.LibroNotificador;
 import Observer.UsuarioNotificacion;
+import Util.DatabaseUtil;
 import org.json.JSONObject;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+// Otros imports necesarios
 
 /**
  * Servicio que gestiona la lógica de negocio para las reservas.
@@ -40,6 +45,55 @@ public class ReservaServicio {
         this.libroServicio = libroServicio;
     }
     
+/**
+ * Actualiza las reservas activas de un usuario para un libro específico marcándolas como completadas
+ * 
+ * @param idUsuario El ID del usuario
+ * @param idLibro El ID del libro
+ * @return Número de reservas actualizadas
+ * @throws Exception Si ocurre un error durante la actualización
+ */
+public int completarReservasUsuarioLibro(Integer idUsuario, Integer idLibro) throws Exception {
+    Connection conexion = null;
+    PreparedStatement stmt = null;
+    int reservasActualizadas = 0;
+    
+    try {
+        // Usar DatabaseUtil en lugar de ConexionBD
+        conexion = DatabaseUtil.getConnection();
+        
+        // Actualizar todas las reservas pendientes del usuario para este libro
+        String sql = "UPDATE Reservas SET idEstadoReserva = 2 " + // 2 = Completada
+                     "WHERE idUsuario = ? AND idLibro = ? AND idEstadoReserva = 1"; // 1 = Pendiente
+        
+        stmt = conexion.prepareStatement(sql);
+        stmt.setInt(1, idUsuario);
+        stmt.setInt(2, idLibro);
+        
+        reservasActualizadas = stmt.executeUpdate();
+        
+        return reservasActualizadas;
+    } catch (Exception e) {
+        throw new Exception("Error al completar reservas: " + e.getMessage());
+    } finally {
+        // Gestión correcta de recursos
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                // Ignorar
+            }
+        }
+        if (conexion != null) {
+            try {
+                conexion.close();
+            } catch (SQLException e) {
+                // Ignorar
+            }
+        }
+    }
+}
+
     /**
      * Registra una nueva reserva y configura el observador correspondiente.
      * 
@@ -300,4 +354,36 @@ public class ReservaServicio {
         
         logDAO.insertar(log);
     }
+    
+    /**
+    * Obtiene una reserva específica por su ID.
+    * 
+    * @param id El ID de la reserva a buscar
+    * @return La reserva encontrada o null si no existe
+    * @throws Exception Si ocurre un error durante la consulta
+    */
+   public Reserva obtenerReservaPorId(Integer id) throws Exception {
+       if (id == null) {
+           throw new IllegalArgumentException("El ID de la reserva no puede ser nulo");
+       }
+
+       // Obtener la reserva usando el DAO
+       Reserva reserva = reservaDAO.obtenerPorId(id);
+
+       // Si la reserva existe, cargar datos relacionados como usuario y libro
+       if (reserva != null) {
+           try {
+               Usuario usuario = usuarioDAO.obtenerPorId(reserva.getIdUsuario());
+               reserva.setUsuario(usuario);
+
+               Libro libro = libroDAO.obtenerPorId(reserva.getIdLibro());
+               reserva.setLibro(libro);
+           } catch (Exception e) {
+               // Si hay error al cargar datos relacionados, solo log el error pero devolver la reserva
+               System.err.println("Error al cargar datos relacionados para la reserva: " + e.getMessage());
+           }
+       }
+
+       return reserva;
+   }
 }

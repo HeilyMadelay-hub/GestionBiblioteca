@@ -1,9 +1,6 @@
 Observer\Observable.class
 Servicio\AutorServicio.class
-Vista\JPanelPrestamoVista.class
-Vista\JPanelUsuarioVista.class
 Modelo\Categoria.class
-Vista\JPanelReservaVista.class
 DAO\ContactoDAO.class
 Observer\LibroNotificador.class
 Servicio\GeneroServicio.class
@@ -14,7 +11,6 @@ Modelo\Usuario.class
 Servicio\PrestamoServicio.class
 enums\EstadoReservaEnum.class
 enums\TipoLogEnum.class
-Main\Main$2.class
 DAO\IMPL\PrestamoDAOImpl.class
 DAO\PrestamoDAO.class
 Main\Main.class
@@ -23,7 +19,6 @@ DAO\GeneroDAO.class
 enums\RolEnum.class
 enums\TipoPrestamoEnum.class
 Util\DatabaseUtil.class
-Vista\JPanelInicio.class
 Observer\Observer.class
 Servicio\ReservaServicio.class
 DAO\IMPL\LibroDAOImpl.class
@@ -39,7 +34,6 @@ DAO\IMPL\LibroDAOImpl$LibroTemp.class
 DAO\IMPL\UsuarioDAOImpl.class
 DAO\AutorDAO.class
 DAO\ReservaDAO.class
-Main\Main$3.class
 Servicio\CategoriaServicio.class
 enums\TipoContactoEnum.class
 DAO\CategoriaDAO.class
@@ -47,16 +41,12 @@ Modelo\Contacto.class
 DAO\IMPL\LogDAOImpl.class
 Servicio\UsuarioServicio.class
 Util\SecurityUtil.class
-Vista\JPanelReportesVista.class
 Modelo\Prestamo.class
 DAO\IMPL\GeneroDAOImpl.class
 Util\LogUtil.class
-Main\Main$1.class
-Vista\JPanelLibroVista.class
 DAO\LogDAO.class
 enums\EstadoLibroEnum.class
 DAO\DAO.class
 Servicio\LibroServicio.class
 Servicio\LogServicio.class
-Vista\MainFrame.class
 Observer\UsuarioNotificacion.class
