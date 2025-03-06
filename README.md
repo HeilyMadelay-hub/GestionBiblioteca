@@ -1,7 +1,5 @@
 # Sistema de Gestión de Biblioteca JDBC
 
-<<<<<<< HEAD
-
 ## Descripción
 
 # Este es un proyecto desarrollado en **Java** utilizando **NetBeans** como entorno de desarrollo y **MySQL** como motor de base de datos. Implementa un sistema de gestión de biblioteca que permite administrar usuarios, libros y préstamos mediante el uso de conectores **JDBC**.
@@ -77,7 +75,6 @@ Herramientas Necesarias
 - MySQL Server
 - NetBeans IDE
 - Driver JDBC de MySQL (ejemplo: `mysql-connector-java-8.0.30.jar`)
-  > > > > > > > 403fc41af1f051e7bff69e34ca0e6867bd598c27
 
 ---
 
@@ -351,6 +348,9 @@ Este proyecto no tiene licencia.
 
 =======
 
-> > > > > > > 403fc41af1f051e7bff69e34ca0e6867bd598c27
-
 Si tienes dudas o sugerencias, no dudes en abrir un _issue_ o contribuir al proyecto.
+
+## 🎥 Video de demostración
+
+[📥 Descargar Video](./videos/demo.mp4)
+
