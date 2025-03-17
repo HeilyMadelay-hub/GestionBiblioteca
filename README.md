@@ -8,8 +8,6 @@
 
 Sistema completo de gestión bibliotecaria que permite realizar operaciones como registrar usuarios, gestionar libros y préstamos, generar reportes avanzados y garantizar la seguridad de los datos. Implementa operaciones CRUD utilizando JDBC y MySQL, con patrones DAO y Observer.
 
-> > > > > > > 403fc41af1f051e7bff69e34ca0e6867bd598c27
-
 ## 🌟 Funcionalidades
 
 - Gestión completa CRUD de usuarios, libros y préstamos.
@@ -159,8 +157,6 @@ app.transaction.timeout=30
 log.file.path=./log.txt
 log.level=INFO
 ```
-
-> > > > > > > 403fc41af1f051e7bff69e34ca0e6867bd598c27
 
 ### 🔧 Ajustes Recomendados:
 
@@ -342,11 +338,6 @@ src/
 
 Este proyecto no tiene licencia.
 
-<<<<<<< HEAD
-
-## 📧 Contacto
-
-=======
 
 Si tienes dudas o sugerencias, no dudes en abrir un _issue_ o contribuir al proyecto.
 
