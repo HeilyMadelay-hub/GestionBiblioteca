@@ -343,5 +343,5 @@ Si tienes dudas o sugerencias, no dudes en abrir un _issue_ o contribuir al proy
 
 ## 🎥 Video de demostración
 
-[📥 Descargar Video](./videos/video1.mp4)
+[📥 Descargar Video](./video/video1.mp4)
 
